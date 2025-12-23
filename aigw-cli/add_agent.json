@@ -1,0 +1,14 @@
+{
+    "name": "TestAgent",
+    "type": "CLAUDE",
+    "description": "Agent registered through API.",
+    "owner": "jody.hunt@cyberark.com",
+    "tags": {
+        "environment": "development",
+        "team": "AI-tigers"
+    },
+    "additionalProperties": {
+        "customProperty1": "value1",
+        "customProperty2": "value2"
+    }
+}

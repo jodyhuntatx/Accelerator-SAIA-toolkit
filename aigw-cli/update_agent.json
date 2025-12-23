@@ -1,0 +1,16 @@
+{
+    "name": "Updated Agent",
+    "description": "This is my updated agent",
+    "owner": "aiops@cyberark.com",
+    "tags": {
+        "environment": "Production",
+        "team": "AIOps"
+    },
+    "redirectCallbackUrls": [
+        "https://prodapp.com/callback"
+    ],
+    "additionalProperties": {
+        "customProperty1": "value1",
+        "customProperty2": "value2"
+    }
+}
