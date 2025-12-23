@@ -2,7 +2,7 @@
 
 ## Overview
 
-DB -> EC2 -> Connector Pool/Network -> Connector -> Resource -> Pcloud account
+DB -> EC2 -> Connector Pool/Network -> Connector -> Pcloud accounts -> Onboard DB & Strong account -> Access Policy
 
 ## 1. Create a PostgreSQL database
 
@@ -70,7 +70,7 @@ DB -> EC2 -> Connector Pool/Network -> Connector -> Resource -> Pcloud account
 
 - Just kidding, this doesn't work
 
-## 7. Create a safe & accounts for the DB admin the Strong account
+## 7. Create a safe & accounts for the DB admin and the Strong account
 
 - Create safe
 - Add member: "Secure Infrastructure Privilege Cloud Ephemeral Access" role with all three Access permissions (List/Use/Retrieve)
@@ -166,13 +166,13 @@ This role will be created when initializing the DB.
 
 - Run: ./connect-db.sh
 - Confirm you are connected to the petclinic database.
-- Run: select * from pets;  <br>
-Output should be:
- id | name  | birth_date | type_id | owner_id 
-----+-------+------------+---------+----------
-  1 | Uri   | 2014-01-01 |       1 |        1
-  2 | Lilah | 2013-01-01 |       2 |        2
-  3 | Elsie | 2020-10-25 |       3 |        3
+- Run: select * from pets;\
+Output should be:\
+ id | name  | birth_date | type_id | owner_id \
+----+-------+------------+---------+----------\
+  1 | Uri   | 2014-01-01 |       1 |        1\
+  2 | Lilah | 2013-01-01 |       2 |        2\
+  3 | Elsie | 2020-10-25 |       3 |        3\
 (3 rows)
 
 ## 13. Add Claude connector
