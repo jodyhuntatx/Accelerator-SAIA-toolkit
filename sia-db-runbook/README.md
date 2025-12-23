@@ -167,7 +167,8 @@ This role will be created when initializing the DB.
 - Run: ./connect-db.sh
 - Confirm you are connected to the petclinic database.
 - Run: select * from pets;\
-Output should be:\
+\
+Output should be:
 ```
  id | name  | birth_date | type_id | owner_id \
 ----+-------+------------+---------+----------\
