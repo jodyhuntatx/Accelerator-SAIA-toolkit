@@ -168,13 +168,14 @@ This role will be created when initializing the DB.
 - Confirm you are connected to the petclinic database.
 - Run: select * from pets;\
 Output should be:\
+```
  id | name  | birth_date | type_id | owner_id \
 ----+-------+------------+---------+----------\
   1 | Uri   | 2014-01-01 |       1 |        1\
   2 | Lilah | 2013-01-01 |       2 |        2\
   3 | Elsie | 2020-10-25 |       3 |        3\
 (3 rows)
-
+```
 ## 13. Add Claude connector
 
 - 
