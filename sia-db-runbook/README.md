@@ -1,7 +1,5 @@
 # Secure Infrastructure Access w/ Zero Standing Privilege
 
-## A How-To Guide
-
 ## Workflow Overview
 
 DB -> EC2 -> Connector Pool/Network -> Connector -> Pcloud accounts -> Onboard DB & Strong account -> Access Policy
