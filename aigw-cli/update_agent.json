@@ -5,12 +5,5 @@
     "tags": {
         "environment": "Production",
         "team": "AIOps"
-    },
-    "redirectCallbackUrls": [
-        "https://prodapp.com/callback"
-    ],
-    "additionalProperties": {
-        "customProperty1": "value1",
-        "customProperty2": "value2"
     }
 }

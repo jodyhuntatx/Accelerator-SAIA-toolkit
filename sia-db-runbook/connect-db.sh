@@ -7,6 +7,7 @@ fi
 set -a
 source ./local.env
 
+
 echo
 echo "psql commands:"
 echo "  \l - list all databases"
