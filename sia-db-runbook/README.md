@@ -32,6 +32,8 @@ With shell scripts:
 11. Test admin access with vaulted credentials
 12. Test ephemeral access
 
+# Detailed Procedure
+
 ## 1. Create a PostgreSQL database
 
 - AWS Aurora and RDS
