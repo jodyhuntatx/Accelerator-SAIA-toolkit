@@ -2,26 +2,26 @@
 
 ## Workflow Overview
 
-In AWS:
+In AWS:\
 1. Create PostgreSQL DB
 2. Create EC2 instance for connector
 
-In tenant Administration:
+In tenant Administration:\
 3. Create connector Pool/Network
 4. Configure Connector
 5. Test connection to DB
 
-In tenant Privilege Cloud:
+In tenant Privilege Cloud:\
 6. Create accounts for DB admin and strong account
 
-In tenant Secure Infrastructure Access:
+In tenant Secure Infrastructure Access:\
 7. Download & import RDS CA certificate bundle
 8. Onboard DB & Strong account
 
-In tenant Administration:
+In tenant Administration:\
 9. Create Access Policy(s) for users
 
-With shell scripts:
+With shell scripts:\
 10. Create database
 11. Test admin access with vaulted credentials
 12. Test ephemeral access
