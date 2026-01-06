@@ -1,11 +1,14 @@
 # Secure Infrastructure Access w/ Zero Standing Privilege
 
 ## Workflow Overview
+This overview is a preview of the configuration procedure. See detailed procedure section below for step-by-step instructions. They specify free-tier resources for demo purposes. Your objectives may require more substantially provisioned resources. Modify as needed.
+
+0. Edit local.env
 
 In AWS:
 
-1. Create PostgreSQL DB
-2. Create EC2 instance for connector
+1. In RDS, create PostgreSQL DB server
+2. In EC2, create EC2 Ubuntu instance for connector
 
 In tenant Administration:
 
@@ -21,37 +24,52 @@ In tenant Secure Infrastructure Access:
 
 7. Download & import RDS CA certificate bundle
 8. Onboard DB & Strong account
+9. Download full-chain certificate
 
 In tenant Administration:
 
-9. Create Access Policy(s) for users
+10. Create Access Policy(s) for users
 
 With shell scripts:
 
-10. Create database
 11. Test admin access with vaulted credentials
-12. Test ephemeral access
+12. Create database
+13. Test ephemeral access
 
 # Detailed Procedure
+
+## 0.  Edit local.env (file in this directory)
+
+Supply missing configuration values in angle brackets. Keep this file open as some of these values are needed during the configuration steps below.
+
+- TENANT_SUBDOMAIN - Your tenant's subdomain ID e.g. if your tenant base URL is
+    https://subdomain-id.cyberark.cloud, your subdomain ID is subdomain-id
+- CYBR_USERNAME - Your tenant login username.
+- CYBR_PASSWORD - Your cached MFA password (see https://<your-subdomain-id>.cyberark.cloud/dpa/adb/short-lived-token>). You will need to update this whenever it expires. It has a defa
+- DB_MASTER_USER - The Master user set during DB server creation. This user is for database administration, e.g. creating/updating databases.
+- TARGET_DB_STRONG_USER - The strong account username to create in the DB. Must be all lower case and match the username in the strong account in the CyberArk safe.
+- TARGET_DB_STRONG_PASSWORD - The strong account password to create in the DB. Must match the password in the strong account in the CyberArk safe.
+- TARGET_DB_USERROLE - The limited role to be created for users in the DB. Must be all lower case and match the custom role specified in SIA access policy.
+- TARGET_DB_SERVER_FQDN - The fully qualified domain name of the database store. Set this value after the next step.
 
 ## 1. Create a PostgreSQL database
 
 - AWS Aurora and RDS
 - PostgreSQL, Free tier
 - Identifier - name of your choice
-- Master username - admin user, something other than postgres
-- Master password - something you'll remember
-- Defaults for Instance Config, Storage
-- Select VPC where your EC2 instance will run
+- Master username - admin user, best if something other than postgres (the default) to avoid confusion.
+- Master password - something you'll remember - record this in local.env if you can't remember it. The master username and password will be saved in an Privilege Cloud account and used for vaulted credential access to the database for administration.
+- Opt for defaults for Instance Config, Storage unless you know better.
+- Select the same VPC where your EC2 instance will run
 - Default for subnet, no public access
-- Security group - easier if you use same as for EC2
-- AZ - no preference
+- Security group - must allow ingress on 5432, easier if you use same as for EC2
+- Availability Zone - no preference
 - RDS proxy - none
 - CA - default
-- Tags - I_Owner, I_Purpose
+- Tags - set values for I_Owner & I_Purpose (per CYBR policy)
 - Password authn, standard insights, no performance insights
 - Create Instance
-- Save connection details once DB is ready (Master uname/pwd, endpoint)
+- Once DB is ready be sure to save connection details (Master uname/pwd, FQDN endpoint) in local.env.
 
 ## 2. Create an EC2 instance for your connector
 
@@ -62,10 +80,10 @@ With shell scripts:
 - Same security group as DB, port 5432 open to security group
 - Use defaults for all other values
 - Launch Instance
-
+  
 ## 3. Create connector pool & network
 
-- In tenant navigate to: Administration->My Environment->Connector Management->Connector Pools
+- In the tenant navigate to: Administration->My Environment->Connector Management->Connector Pools
 - Click Add Pool
 - Enter name for pool, enable Add a network with the pool name
 - Save and Continue
@@ -77,7 +95,7 @@ With shell scripts:
 
 ## 4. Create connector
 
-- In tenant navigate to: Administration->My Environment->Connector Management->Connectors->SIA Connectors
+- In the tenant navigate to: Administration->My Environment->Connector Management->Connectors->SIA Connectors
 - Click Add Connector
 - Select existing pool just created
 - Select Linux
@@ -90,7 +108,7 @@ With shell scripts:
 
 ## 5. Test connector connection to DB
 
-- In tenant: SIA Connectors
+- In the tenant navigate to: SIA Connectors (as above)
 - Click on new connector, click vertical ... in upper right
 - Select Test, under Target connection:
   - paste FQDN of DB server (not EC2 instance!), port 5432
@@ -102,7 +120,7 @@ With shell scripts:
 
 ## 6. Create a safe & accounts for the DB admin user and the Strong account
 
-- In Privilege Cloud -> Policies -> Safes
+- In the tenant navigate to: Privilege Cloud -> Policies -> Safes
 - Click create safe, give meaningful name
 - Add member from CyberArk Cloud Directory: "Secure Infrastructure Privilege Cloud Ephemeral Access" role with default Read Only permissions (List/Use/Retrieve Accounts)
 - In Privilege Cloud -> Accounts:
@@ -131,7 +149,7 @@ With shell scripts:
 
 ## 7. Download and import RDS CA certificate bundle
 
-- Navigate to:\
+- In AWS documentation navigate to:\
 https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.SSL.html
 - Scroll down to table under "Certificate Bundles by AWS Region"
 - Download the certificate by clicking on the correct .pem file for the region in which your DB is running
@@ -144,7 +162,7 @@ https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.SSL.html
 
 ## 8. Onboard DB and create strong account
 
-- In tenant navigate to: Secure Infrastructure Access->Resource Management
+- In the tenant navigate to: Secure Infrastructure Access->Resource Management
 - Scroll down to Databases, click Onboard a Database.
   - Database: PostgreSQL
   - Location: AWS
@@ -164,10 +182,15 @@ https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.SSL.html
 - Click Select a TLS certificate and select the certificate added above.
 - Click Onboard
 
-## 9. Create user access policy
+## 9. Download full-chain certificate
 
-- In the tenant navigate to:
-  - Administration -> Access control policies -> User access
+- In the tenant navigate to: Secure Infrastructure Access->Connection Guidance
+- Click the "Databases" tab.
+- Click "Generate and Download" button under "Download full chain certificate", save the file to this directory. Modify PGSSLROOTCERT environment variable in local.env if you want to use a different directory and/or file name.
+
+## 10. Create user access policy
+
+- In the tenant navigate to: Administration->Access control policies->User access
 - Click Create Policy -> Database Access
 - Name: Something memorable & related to the user & target
   - Timeframe, tags as desired
@@ -182,37 +205,27 @@ Note this is NOT a CyberArk role, but a database role that will be created when 
 - Click Add to policy, confirm input, click Next
 - Specify desired timeframes for access, click Create policy
 
-## 10. Create database using vaulted credentials
-
-- Download the full-chain certificate from your tenant.\
-  See under Connection Guidance -> Databases tab.\
-     https://<your-subdomain-id>.cyberark.cloud/dpa/connection-guidance\
-  Save the downloaded file (proxy_full_chain.pem) to this directory.
-- Edit the file local.env to set environment variable values:
-  - PGSSLROOTCERT - make sure this references the downloaded file from previous step.
-  - TENANT_SUBDOMAIN - Your tenant's subdomain ID e.g. if your tenant base URL is
-      https://subdomain-id.cyberark.cloud, your subdomain ID is subdomain-id
-  - CYBR_USERNAME - Your tenant login.
-  - CYBR_PASSWORD - Your cached MFA password (see https://<your-subdomain-id>.cyberark.cloud/dpa/adb/short-lived-token>)
-  - DB_MASTER_USER - The Master user set during DB server creation. This user is used to initialize the database.
-  - TARGET_DB_STRONG_USER - The strong account username to create in the DB. Must be all lower case and match the username in the strong account in the CyberArk safe.
-  - TARGET_DB_STRONG_PASSWORD - The strong account password to create in the DB. Must match the password in the strong account in the CyberArk safe.
-  - TARGET_DB_USERROLE - The limited role to be created for users in the DB. Must be all lower case and match the custom role specified in SIA access policy.
-  - TARGET_DB_SERVER_FQDN - The fully qualified domain name of the database store.
-
 ## 11. Test DB admin access with vaulted credentials
 
-- Run: ./connect-db.sh VAULTED
-- This should connect your user through SIA to the database as the Master user using vaulted credentials.
+- In this directory run: ./connect-db.sh VAULTED
+- This should connect your user through SIA to the database using the Master user's vaulted credentials.
 - If the connection is not successful:
   - ERROR:  DPA_AUTHENTICATION_FAILED: Refresh your cached MFA password in local.env
   - Other errors: Review the steps above and ensure all environment variables in local.env match the values in the Pcloud accounts and SIA configurations.
-- Run create-petclinic.db.sh to initialize the petclinic database.
+- DO NOT PROCEED to the next step until this step succeeds.
 
-## 12. Test ephemeral access
+## 12. Create database using vaulted credentials
+
+- In this directory run: create-petclinic.db.sh
+- This will connect as the admin user to initialize the database:
+  - Creates the petclinic database (see: db_load_petclinic.sql).
+  - Creates the strong user (see: db_create_strong_user.sql)
+  - Creates the database role for ephemeral users (see: db_create_userfole.sql)
+
+## 13. Test ephemeral access
 
 - Run: ./connect-db.sh
-- Confirm you are connected to the petclinic database.
+- Confirm you are connected to the postgres database.
 - Run: select * from pets;\
 \
 Output should be:
