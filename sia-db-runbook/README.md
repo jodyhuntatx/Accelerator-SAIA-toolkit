@@ -128,7 +128,7 @@ Supply missing configuration values in angle brackets. Keep this file open as so
   This will be used interactively with the psql CLI and vaulted credentials to initialize the DB:
   - Type: Database
   - Platform: Postgres
-  - Safe: the one just created w/ ephemeral user role
+  - Safe: the one just created w/ ephemeral user role member
   - Username: Master username for DB
   - Password: Master password for DB
   - Address: FQDN for DB
@@ -139,7 +139,7 @@ Supply missing configuration values in angle brackets. Keep this file open as so
   This will be used by SIA to create ephemeral users.
   - Type: Database
   - Platform: Postgres
-  - Safe: the one just created w/ ephemeral user role
+  - Safe: the one just created w/ ephemeral access role member
   - Username: Strong account username for DB
   - Password: Strong account password for DB
   - Address: FQDN for DB
@@ -175,32 +175,32 @@ https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.SSL.html
 - Strong account details:
   - Select: Create a database's strong account
   - Select: Vaulted in Privilege Cloud
-    - Secret name: Displayed as tile label - can be anything
+    - Secret name: Can be anything - displayed as tile label
     - Safe: The one you created above w/ ephemeral access role member
     - Account: customized account name for the Strong account in the Safe.
 - Enable TLS certificate (required for vaulted credential access)
-- Click Select a TLS certificate and select the certificate added above.
-- Click Onboard
+- Click: "Select a TLS certificate", select the AWS certificate bundle added above.
+- Click: "Onboard"
 
 ## 9. Download full-chain certificate
 
 - In the tenant navigate to: Secure Infrastructure Access->Connection Guidance
 - Click the "Databases" tab.
-- Click "Generate and Download" button under "Download full chain certificate", save the file to this directory. Modify PGSSLROOTCERT environment variable in local.env if you want to use a different directory and/or file name.
+- Click "Generate and Download" button under "Download full chain certificate", save the file to this directory. If you want to use a different directory and/or file name, modify the PGSSLROOTCERT environment variable in local.env (toward the bottom of the file).
 
 ## 10. Create user access policy
 
 - In the tenant navigate to: Administration->Access control policies->User access
-- Click Create Policy -> Database Access
-- Name: Something memorable & related to the user & target
+- Click: Create Policy -> Database Access
+- Name: Best practice is to specify a CyberArk Identity Role (e.g "Secure AI Admins") rather than individual users and a memorable name for the database target.
   - Timeframe, tags as desired
-  - Next
+  - Click: Next
 - Add database targets, PostgreSQL
-- Click Add Instance, select target DB for strong account
+- Click: "Add Instance", select target DB for strong account
 - Custom roles: enter name of target DB user role in DB server.\
 Note this is NOT a CyberArk role, but a database role that will be created when initializing the DB.
-- Click Add, confirm input, click Next
-- Click Add identities, search for users/groups/roles to have access to DB
+- Click: Add, confirm input, click Next
+- Click: Add identities, search for users/groups/roles to have access to DB
 - Check box(es) for users/groups/roles to add to policy
 - Click Add to policy, confirm input, click Next
 - Specify desired timeframes for access, click Create policy
